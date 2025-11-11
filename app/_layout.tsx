@@ -21,7 +21,7 @@ export default function RootLayout() {
         headerTitleAlign: "center",
         headerBackTitle: "Back",
       }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="tabs" options={{ headerShown: false }} />
         <Stack.Screen name="event/[id]" options={{ title: "Event Details" }} />
       </Stack>
     </Provider>

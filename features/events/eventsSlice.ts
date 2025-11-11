@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { EventItem } from "../../types";
-import { loadBookmarks, saveBookmarks } from "../../storage/persist";
+import { loadBookmarks, saveBookmarks } from "../../storage/bookmarksStorage";
 
 type EventsState = {
   items: EventItem[];         // from mock JSON (later Firestore)
