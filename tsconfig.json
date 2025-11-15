@@ -1,0 +1,47 @@
+// {
+//   "extends": "expo/tsconfig.base",
+//   "compilerOptions": {
+//     "strict": true
+//   }
+// }
+
+// {
+//   "extends": "expo/tsconfig.base",
+//   "compilerOptions": {
+//     "strict": true,
+//     "paths": {
+//       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+//     }
+//   }
+// }
+
+
+// {
+//   "extends": "expo/tsconfig.base",
+//   "compilerOptions": {
+//     "strict": true
+//   },
+//   "include": ["**/*.ts", "**/*.tsx", "firebase-react-native.d.ts"]
+// }
+
+// {
+//   "extends": "expo/tsconfig.base",
+//   "compilerOptions": {
+//     "strict": true,
+//     "paths": {
+//       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+//     }
+//   }
+// }
+
+{
+  "compilerOptions": {
+    "paths": {
+      "@firebase/auth": [
+        "./node_modules/@firebase/auth/dist/index.rn.d.ts"
+      ]
+    }
+  },
+  "extends": "expo/tsconfig.base"
+}
+

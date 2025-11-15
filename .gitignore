@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Expo local files
+.expo/
+.expo-shared/
+
+# Windows thumbnail cache
+Thumbs.db
+
+# Log files
+*.log
