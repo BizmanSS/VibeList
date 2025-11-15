@@ -1,0 +1,7 @@
+# Treat all text files properly
+* text=auto
+
+# Force LF for JSON/TS files
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
