@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
 import { colors } from "../constants/colors";
 import { useLocation } from "../hooks/useLocation";
+import LocationIcon from '../assets/icons/LocationIcon'
 
 export default function LocationSelector() {
   const { city, updateCity } = useLocation();
@@ -15,7 +16,10 @@ export default function LocationSelector() {
   return (
     <View style={styles.container}>
       <Pressable onPress={() => setVisible(true)}>
-        <Text style={styles.label}>📍 {city}</Text>
+      <div style={styles.locationBox}>
+        <div style={styles.locationIcon}><LocationIcon /></div> 
+        <Text style={styles.label}>{city}</Text>
+      </div>
       </Pressable>
 
       <Modal visible={visible} transparent animationType="fade">
@@ -56,5 +60,7 @@ const styles = StyleSheet.create({
   option: {
     padding: 10, backgroundColor: colors.bg, borderRadius: 8, width: "100%", alignItems: "center"
   },
-  cancel: { marginTop: 8 }
+  cancel: { marginTop: 8 },
+  locationIcon: {width: 40, height: 40, borderRadius: 200, backgroundColor: colors.warmGrey},
+  locationBox: {display:"flex", alignItems: 'center', gap: 10}
 });

@@ -18,7 +18,7 @@ export default function EventCard({ event }: { event: EventItem }) {
     >
       <Image source={{ uri: event.image }} style={{ width: "100%", height: 140 }} />
       <View style={{ padding: 12, gap: 6 }}>
-        <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text }}>{event.title}</Text>
+        <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>{event.title}</Text>
         <Text style={{ color: colors.subtext }}>{event.venue} • {new Date(event.dateISO).toLocaleDateString()}</Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 6 }}>
           <Text style={{ color: colors.text }}>{event.price ? `$${event.price}` : "Free"}</Text>

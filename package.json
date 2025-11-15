@@ -10,22 +10,24 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@reduxjs/toolkit": "^2.1.0",
     "expo": "~54.0.23",
+    "expo-linking": "~8.0.8",
     "expo-router": "^6.0.14",
     "expo-status-bar": "~3.0.8",
-    "expo-linking": "~8.0.8",
+    "firebase": "^11.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-web": "^0.19.13",
     "react-native-safe-area-context": "~5.6.0",
-    "@react-native-async-storage/async-storage": "^2.2.0",
-    "@reduxjs/toolkit": "^2.1.0",
-    "react-redux": "^9.1.2",
-    "firebase": "^11.0.0"
+    "react-native-svg": "^15.14.0",
+    "react-native-web": "^0.19.13",
+    "react-redux": "^9.1.2"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "react-native-svg-transformer": "^1.5.2",
     "typescript": "~5.9.2"
   },
   "private": true
