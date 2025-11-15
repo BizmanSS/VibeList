@@ -34,14 +34,30 @@
 //   }
 // }
 
+// {
+//   "compilerOptions": {
+//     "paths": {
+//       "@firebase/auth": [
+//         "./node_modules/@firebase/auth/dist/index.rn.d.ts"
+//       ]
+//     }
+//   },
+//   "extends": "expo/tsconfig.base"
+// }
+
+
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    // Keep your project-specific compiler options here if any
+    
+    // Add the paths configuration from the second snippet
     "paths": {
-      "@firebase/auth": [
-        "./node_modules/@firebase/auth/dist/index.rn.d.ts"
-      ]
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
     }
   },
-  "extends": "expo/tsconfig.base"
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }
-
