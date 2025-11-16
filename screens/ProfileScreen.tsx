@@ -25,6 +25,7 @@ export default function Profile({ navigate }: Props) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       const user = auth.currentUser;
@@ -53,6 +54,7 @@ export default function Profile({ navigate }: Props) {
     fetchProfile();
   }, []);
 
+  // Save profile
   const handleSave = async () => {
     if (!firstName || !lastName || !username || !gender) {
       Alert.alert("Error", "Please fill all fields");
@@ -91,6 +93,7 @@ export default function Profile({ navigate }: Props) {
     }
   };
 
+  // Change password
   const handleChangePassword = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       Alert.alert("Error", "Please fill all password fields");
@@ -127,36 +130,55 @@ export default function Profile({ navigate }: Props) {
   };
 
   const handleDeleteAccount = async () => {
-    Alert.alert(
-      "Confirm Deletion",
-      "Are you sure? This cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              setDeleting(true);
-              const user = auth.currentUser;
-              if (!user) return;
+  if (!auth.currentUser?.email) return;
 
-              await deleteDoc(doc(db, "users", user.uid));
-              await deleteUser(user);
+  Alert.prompt(
+    "Confirm Deletion",
+    "Enter your password to delete your account. This cannot be undone.",
+    [
+      {
+        text: "Cancel",
+        style: "cancel"
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async (password) => {
+          if (!password) {
+            Alert.alert("Error", "Password is required to delete account");
+            return;
+          }
 
-              Alert.alert("Deleted", "Your account has been removed");
-              navigate("Landing");
-            } catch (err: any) {
-              Alert.alert("Error", err.message);
-            } finally {
-              setDeleting(false);
-              await signOut(auth);
-            }
-          },
-        },
-      ]
-    );
-  };
+          const user = auth.currentUser;
+          if (!user) return;
+
+          setDeleting(true);
+
+          try {
+            const credential = EmailAuthProvider.credential(user.email!, password);
+            await reauthenticateWithCredential(user, credential);
+
+            const userDocRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(userDocRef);
+            if (docSnap.exists()) await deleteDoc(userDocRef);
+
+            await deleteUser(user);
+
+            Alert.alert("Deleted", "Your account has been removed");
+
+            navigate("Landing");
+          } catch (err: any) {
+            Alert.alert("Error", err.message);
+          } finally {
+            setDeleting(false);
+          }
+        }
+      }
+    ],
+    "secure-text"
+  );
+};
+
 
   if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
