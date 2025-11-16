@@ -28,6 +28,14 @@
     },
     "plugins": ["expo-router"],
     "experiments": { "typedRoutes": true },
-    "extra": { "router": { "root": "app" } }
+    "extra": {
+      "router": { "root": "app" },
+      "API_KEY": "AIzaSyCYCbTS6DWZluFirPHrex2eJ6hsXl3JP5w",
+      "AUTH_DOMAIN": "vibelist-59e14.firebaseapp.com",
+      "PROJECT_ID": "vibelist-59e14",
+      "STORAGE_BUCKET": "vibelist-59e14.firebasestorage.app",
+      "MESSAGING_SENDER_ID": "354654311889",
+      "APP_ID": "1:354654311889:web:fe64edb087714280ecbcf0"
+    }
   }
 }

@@ -16,10 +16,10 @@ export default function LocationSelector() {
   return (
     <View style={styles.container}>
       <Pressable onPress={() => setVisible(true)}>
-      <div style={styles.locationBox}>
-        <div style={styles.locationIcon}><LocationIcon /></div> 
+      <View style={styles.locationBox}>
+        <View style={styles.locationIcon}><LocationIcon /></View> 
         <Text style={styles.label}>{city}</Text>
-      </div>
+      </View>
       </Pressable>
 
       <Modal visible={visible} transparent animationType="fade">
@@ -46,7 +46,7 @@ export default function LocationSelector() {
 }
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 10 },
+  container: { marginBottom: 10, marginTop:10 },
   label: { fontSize: 16, fontWeight: "600", color: colors.primary },
   modalOverlay: {
     flex: 1, backgroundColor: "rgba(0,0,0,0.5)",
@@ -62,5 +62,5 @@ const styles = StyleSheet.create({
   },
   cancel: { marginTop: 8 },
   locationIcon: {width: 40, height: 40, borderRadius: 200, backgroundColor: colors.warmGrey},
-  locationBox: {display:"flex", alignItems: 'center', gap: 10}
+  locationBox: {display:"flex", gap: 10, flexDirection: "row", alignItems: "center"}
 });

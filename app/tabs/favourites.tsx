@@ -11,7 +11,8 @@ export default function Favourites() {
   return (
     <View style={global.screen}>
       <Text style={global.h1}>Favourites</Text>
-      <FlatList data={favs} keyExtractor={(e)=>e.id} renderItem={({item})=> <EventCard event={item} />} />
+      <FlatList data={favs} keyExtractor={(e)=>e.id} renderItem={({item})=> <EventCard event={item} />} 
+      showsVerticalScrollIndicator={false}/>
     </View>
   );
 }

@@ -5,6 +5,7 @@ import { colors } from "../constants/colors";
 import { useEffect } from "react";
 import { bootstrapBookmarks, setEvents } from "../features/events/eventsSlice";
 import events from "../assets/data/events.json";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -14,16 +15,23 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <Stack screenOptions={{
-        headerStyle: { backgroundColor: colors.primary },
-        headerTintColor: colors.white,
-        headerTitleStyle: { fontWeight: "700" },
-        headerTitleAlign: "center",
-        headerBackTitle: "Back",
-      }}>
-        <Stack.Screen name="tabs" options={{ headerShown: false }} />
-        <Stack.Screen name="event/[id]" options={{ title: "Event Details" }} />
-      </Stack>
+      <AuthProvider>
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: colors.primary },
+            headerTintColor: colors.white,
+            headerTitleStyle: { fontWeight: "700" },
+            headerTitleAlign: "center",
+            headerBackTitle: "Back",
+          }}
+        >
+          <Stack.Screen name="tabs" options={{ headerShown: false }} />
+          <Stack.Screen name="event/[id]" options={{ title: "Event Details" }} />
+          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/forgot-password" options={{ headerShown: false }} />
+        </Stack>
+      </AuthProvider>
     </Provider>
   );
 }

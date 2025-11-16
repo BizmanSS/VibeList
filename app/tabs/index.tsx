@@ -15,6 +15,7 @@ export default function Home() {
         data={events}
         keyExtractor={(e) => e.id}
         renderItem={({ item }) => <EventCard event={item} />}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
       />
     </View>
