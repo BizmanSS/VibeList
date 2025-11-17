@@ -1,6 +1,6 @@
 [
-  { "id":"1","title":"Burger Bistro Live DJ","image":"https://picsum.photos/seed/burger/600/400","venue":"Rose Garden","city":"Toronto","dateISO":"2025-12-15T19:00:00.000Z","price":32,"rating":4.7,"description":"A chill evening with gourmet burgers and live DJ."},
-  { "id":"2","title":"Pizza & Paint Night","image":"https://picsum.photos/seed/pizza/600/400","venue":"Art House","city":"Toronto","dateISO":"2025-12-18T01:00:00.000Z","price":20,"rating":4.5,"description":"Guided painting with unlimited pizza slices."},
-  { "id":"3","title":"Live DJ","image":"https://picsum.photos/seed/burger/600/400","venue":"Rose Garden","city":"Toronto","dateISO":"2025-12-15T19:00:00.000Z","price":32,"rating":4.7,"description":"A chill evening with gourmet burgers and live DJ."},
-  { "id":"4","title":"Paint Night","image":"https://picsum.photos/seed/pizza/600/400","venue":"Art House","city":"Toronto","dateISO":"2025-12-18T01:00:00.000Z","price":20,"rating":4.5,"description":"Guided painting with unlimited pizza slices."}
+  { "id":"1","title":"Burger Bistro Live DJ","image":"https://picsum.photos/seed/burger/600/400","venue":"Rose Garden","city":"Toronto","dateISO":"2025-12-15T19:00:00.000Z","price":"32","rating":4.7,"description":"A chill evening with gourmet burgers and live DJ."},
+  { "id":"2","title":"Pizza & Paint Night","image":"https://picsum.photos/seed/pizza/600/400","venue":"Art House","city":"Toronto","dateISO":"2025-12-18T01:00:00.000Z","price":"20","rating":4.5,"description":"Guided painting with unlimited pizza slices."},
+  { "id":"3","title":"Live DJ","image":"https://picsum.photos/seed/burger/600/400","venue":"Rose Garden","city":"Toronto","dateISO":"2025-12-15T19:00:00.000Z","price":"32","rating":4.7,"description":"A chill evening with gourmet burgers and live DJ."},
+  { "id":"4","title":"Paint Night","image":"https://picsum.photos/seed/pizza/600/400","venue":"Art House","city":"Toronto","dateISO":"2025-12-18T01:00:00.000Z","price":"20","rating":4.5,"description":"Guided painting with unlimited pizza slices."}
 ]

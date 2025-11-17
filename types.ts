@@ -5,7 +5,7 @@ export type EventItem = {
   venue: string;
   city: string;
   dateISO: string;    // ISO string
-  price?: number;     // undefined = “Free”
+  price?: string;     // undefined = “Free”
   rating?: number;    // 0..5
   description?: string;
   externalLink?: string;
