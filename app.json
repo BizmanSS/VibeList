@@ -2,6 +2,7 @@
   "expo": {
     "name": "vibelist",
     "slug": "vibelist",
+    "scheme": "vibelist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,15 +22,22 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.vibelist"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-router"],
-    "experiments": { "typedRoutes": true },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
-      "router": { "root": "app" },
+      "router": {
+        "root": "app"
+      },
       "API_KEY": "AIzaSyCYCbTS6DWZluFirPHrex2eJ6hsXl3JP5w",
       "AUTH_DOMAIN": "vibelist-59e14.firebaseapp.com",
       "PROJECT_ID": "vibelist-59e14",
