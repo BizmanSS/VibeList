@@ -1,0 +1,7 @@
+{
+  "build": {
+    "development": {
+      "android": { "buildType": "apk" }
+    }
+  }
+}
