@@ -4,16 +4,16 @@ import {
   Image,
   StyleSheet,
   TextInput,
-  Button,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
   Alert,
   Switch,
+  TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import { useEffect, useState } from "react";
-import { global } from "../../styles/global";
 import { colors } from "../../constants/colors";
 import { auth, db } from "../../services/firebase";
 import {
@@ -49,25 +49,21 @@ export default function Profile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // profile fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
 
-  // edit state
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // change password state
   const [showPasswordSection, setShowPasswordSection] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
 
-  // delete + theme state
   const [deleting, setDeleting] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -82,6 +78,7 @@ export default function Profile() {
       try {
         const ref = doc(db, "users", user.uid);
         const snap = await getDoc(ref);
+
         if (snap.exists()) {
           const data = snap.data() as ProfileData;
           setProfile(data);
@@ -92,11 +89,9 @@ export default function Profile() {
           setGender(data.gender ?? "");
           setEmail(data.email ?? user.email ?? "");
         } else {
-          // fallback to auth info only
           setEmail(user.email ?? "");
         }
-      } catch (err) {
-        console.error("Error loading profile:", err);
+      } catch {
         Alert.alert("Error", "Failed to load profile.");
       } finally {
         setLoading(false);
@@ -117,7 +112,6 @@ export default function Profile() {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
-      // username uniqueness check if changed
       if (profile && username !== profile.username) {
         const q = query(
           collection(db, "users"),
@@ -138,14 +132,14 @@ export default function Profile() {
         gender,
       });
 
-      const updated: ProfileData = {
+      setProfile({
         firstName,
         lastName,
         username,
         gender,
         email,
-      };
-      setProfile(updated);
+      });
+
       setIsEditing(false);
       Alert.alert("Success", "Profile updated");
     } catch (err: any) {
@@ -160,10 +154,12 @@ export default function Profile() {
       Alert.alert("Error", "Please fill all password fields");
       return;
     }
+
     if (newPassword !== confirmPassword) {
       Alert.alert("Error", "New passwords do not match");
       return;
     }
+
     if (newPassword.length < 6) {
       Alert.alert("Error", "Password must be at least 6 characters");
       return;
@@ -178,11 +174,12 @@ export default function Profile() {
       await reauthenticateWithCredential(user, cred);
       await updatePassword(user, newPassword);
 
-      Alert.alert("Success", "Password changed");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
       setShowPasswordSection(false);
+
+      Alert.alert("Success", "Password changed");
     } catch (err: any) {
       Alert.alert("Error", err.message);
     } finally {
@@ -200,39 +197,35 @@ export default function Profile() {
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      "Confirm Deletion",
-      "Are you sure? This cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              setDeleting(true);
-              const user = auth.currentUser;
-              if (!user) throw new Error("No authenticated user");
+    Alert.alert("Confirm Deletion", "Are you sure? This cannot be undone.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            setDeleting(true);
+            const user = auth.currentUser;
+            if (!user) throw new Error("No authenticated user");
 
-              await deleteDoc(doc(db, "users", user.uid));
-              await deleteUser(user);
+            await deleteDoc(doc(db, "users", user.uid));
+            await deleteUser(user);
 
-              Alert.alert("Deleted", "Your account has been removed");
-              router.replace("/auth/login");
-            } catch (err: any) {
-              Alert.alert("Error", err.message);
-            } finally {
-              setDeleting(false);
-            }
-          },
+            Alert.alert("Deleted", "Your account has been removed");
+            router.replace("/auth/login");
+          } catch (err: any) {
+            Alert.alert("Error", err.message);
+          } finally {
+            setDeleting(false);
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   if (loading) {
     return (
-      <View style={[global.screen, styles.center]}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -242,244 +235,340 @@ export default function Profile() {
     firstName || lastName ? `${firstName} ${lastName}`.trim() : "Guest User";
 
   const usernameTag = username ? `@${username}` : "";
-
-  const avatarUrl =
-    "https://cdn-icons-png.flaticon.com/512/847/847969.png"; // keep your avatar
+  const avatarUrl = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+    <ImageBackground
+      source={require("../../assets/images/profileWallpaper.webp")}
+      style={styles.background}
+      resizeMode="cover"
     >
-      <ScrollView
-        style={global.screen}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* HEADER: avatar + name + username */}
-        <View style={styles.headerCenter}>
-          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-          <Text style={styles.name}>{displayName}</Text>
-          {!!usernameTag && (
-            <Text style={styles.usernameTag}>{usernameTag}</Text>
-          )}
-        </View>
+      <View style={styles.titleContainer}>
+        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+        <Text style={styles.title}>{displayName}</Text>
+        {!!usernameTag && <Text style={styles.usernameTag}>{usernameTag}</Text>}
+      </View>
 
-        {/* PROFILE INFO CARD */}
-        <View style={styles.card}>
-          <View style={styles.cardHeaderRow}>
-            <Text style={styles.cardTitle}>Profile Info</Text>
-            <Text
-              style={styles.editLink}
+      <KeyboardAvoidingView
+        style={styles.keyboardWrapper}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+      >
+        <View style={styles.formWrapper}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.label}>First Name</Text>
+            <TextInput
+              style={styles.input}
+              value={firstName}
+              onChangeText={setFirstName}
+              editable={isEditing}
+              placeholder="First Name"
+              placeholderTextColor="#BEC3D2"
+            />
+
+            <Text style={styles.label}>Last Name</Text>
+            <TextInput
+              style={styles.input}
+              value={lastName}
+              onChangeText={setLastName}
+              editable={isEditing}
+              placeholder="Last Name"
+              placeholderTextColor="#BEC3D2"
+            />
+
+            <Text style={styles.label}>Username</Text>
+            <TextInput
+              style={styles.input}
+              value={username}
+              onChangeText={setUsername}
+              editable={isEditing}
+              placeholder="Username"
+              placeholderTextColor="#BEC3D2"
+            />
+
+            <Text style={styles.label}>Gender</Text>
+            <TextInput
+              style={styles.input}
+              value={gender}
+              onChangeText={setGender}
+              editable={isEditing}
+              placeholder="Gender"
+              placeholderTextColor="#BEC3D2"
+            />
+
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, styles.readonlyInput]}
+              value={email}
+              editable={false}
+              placeholderTextColor="#BEC3D2"
+            />
+
+            <TouchableOpacity
+              style={styles.button}
               onPress={() => setIsEditing((prev) => !prev)}
             >
-              {isEditing ? "Cancel" : "Edit"}
-            </Text>
-          </View>
+              <Text style={styles.buttonText}>
+                {isEditing ? "Cancel" : "Edit Profile"}
+              </Text>
+            </TouchableOpacity>
 
-          <TextInput
-            style={styles.input}
-            placeholder="First Name"
-            value={firstName}
-            onChangeText={setFirstName}
-            editable={isEditing}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Last Name"
-            value={lastName}
-            onChangeText={setLastName}
-            editable={isEditing}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChangeText={setUsername}
-            editable={isEditing}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Gender"
-            value={gender}
-            onChangeText={setGender}
-            editable={isEditing}
-          />
-          <TextInput
-            style={[styles.input, styles.readonlyInput]}
-            value={email}
-            editable={false}
-          />
+            {isEditing && (
+              <TouchableOpacity
+                style={[styles.button, saving && styles.buttonDisabled]}
+                onPress={saving ? undefined : handleSaveProfile}
+              >
+                <Text style={styles.buttonText}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </Text>
+              </TouchableOpacity>
+            )}
 
-          {isEditing && (
-            <Button
-              title={saving ? "Saving..." : "Save Profile"}
-              onPress={handleSaveProfile}
-              disabled={saving}
-            />
-          )}
-        </View>
+            <View style={styles.sectionDivider} />
 
-        {/* CHANGE PASSWORD CARD */}
-        <View style={styles.card}>
-          <Text
-            style={styles.cardTitle}
-            onPress={() => setShowPasswordSection((prev) => !prev)}
-          >
-            Change Password {showPasswordSection ? "▲" : "▼"}
-          </Text>
-
-          {showPasswordSection && (
-            <>
-              <TextInput
-                style={styles.input}
-                placeholder="Current Password"
-                secureTextEntry
-                value={currentPassword}
-                onChangeText={setCurrentPassword}
+            <View style={styles.themeRow}>
+              <Text style={styles.label}>Dark Theme</Text>
+              <Switch
+                value={darkMode}
+                onValueChange={setDarkMode}
+                trackColor={{ false: "#bbb", true: colors.primary }}
+                thumbColor={darkMode ? colors.white : "#f4f3f4"}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="New Password"
-                secureTextEntry
-                value={newPassword}
-                onChangeText={setNewPassword}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm New Password"
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
-              <Button
-                title={changingPassword ? "Changing..." : "Update Password"}
-                onPress={handleChangePassword}
-                disabled={changingPassword}
-              />
-            </>
-          )}
-        </View>
+            </View>
 
-        {/* THEME TOGGLE CARD */}
-        <View style={styles.card}>
-          <View style={styles.settingsRow}>
-            <Text style={styles.settingLabel}>Dark Theme</Text>
-            <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
-              trackColor={{ false: "#bbb", true: colors.primary }}
-              thumbColor={darkMode ? colors.white : "#f4f3f4"}
-            />
-          </View>
-        </View>
+            <View style={styles.sectionDivider} />
 
-        {/* LOGOUT + DELETE CARD */}
-        <View style={styles.card}>
-          <Button title="Logout" onPress={handleLogout} />
-          <View style={{ height: 12 }} />
-          <Button
-            title={deleting ? "Deleting..." : "Delete Account"}
-            color="#FF3B30"
-            onPress={handleDeleteAccount}
-            disabled={deleting}
-          />
+            <TouchableOpacity
+              onPress={() => setShowPasswordSection((prev) => !prev)}
+              style={styles.passwordToggle}
+            >
+              <Text style={styles.passwordToggleText}>Change Password</Text>
+              <Text style={styles.passwordArrow}>
+                {showPasswordSection ? "▲" : "▼"}
+              </Text>
+            </TouchableOpacity>
+
+            {showPasswordSection && (
+              <View style={styles.passwordBox}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Current Password"
+                  secureTextEntry
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                  placeholderTextColor="#BEC3D2"
+                />
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="New Password"
+                  secureTextEntry
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  placeholderTextColor="#BEC3D2"
+                />
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm New Password"
+                  secureTextEntry
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholderTextColor="#BEC3D2"
+                />
+
+                <TouchableOpacity
+                  style={[styles.button, changingPassword && styles.buttonDisabled]}
+                  onPress={
+                    changingPassword ? undefined : handleChangePassword
+                  }
+                >
+                  <Text style={styles.buttonText}>
+                    {changingPassword ? "Updating..." : "Update Password"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <TouchableOpacity style={styles.button} onPress={handleLogout}>
+              <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.deleteButton,
+                deleting && styles.buttonDisabled,
+              ]}
+              onPress={deleting ? undefined : handleDeleteAccount}
+            >
+              <Text style={styles.deleteText}>
+                {deleting ? "Deleting..." : "Delete Account"}
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    padding: 10,
-    paddingBottom: 32,
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
   },
 
-  headerCenter: {
-    alignItems: "center",
-    marginBottom: 24,
+  keyboardWrapper: {
+    flex: 1,
+    width: "100%",
   },
 
-  center: {
-    alignItems: "center",
+  loadingContainer: {
+    flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+  },
+
+  titleContainer: {
+    height: "28%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 999,
-    marginBottom: 12,
+    width: 100,
+    height: 100,
+    borderRadius: 55,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: "white",
+    marginBottom: 10,
   },
 
-  name: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: colors.text,
+  title: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "600",
   },
 
   usernameTag: {
+    fontSize: 15,
+    color: "white",
     marginTop: 4,
-    fontSize: 14,
-    color: colors.subtext,
+    opacity: 0.9,
   },
 
-  card: {
+  formWrapper: {
+    flex: 1,
+    backgroundColor: "white",
     width: "100%",
-    padding: 10,
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 16,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 25,
+    paddingTop: 30,
   },
 
-  cardHeaderRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
+  scrollContent: {
+    paddingBottom: 40,
   },
 
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 8,
-  },
-
-  editLink: {
-    fontSize: 14,
-    color: colors.primary,
+  label: {
+    fontSize: 16,
+    color: "#4C4D56",
+    marginBottom: 10,
   },
 
   input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-    fontSize: 16,
-    backgroundColor: colors.white,
-    color: colors.text,
+    marginBottom: 20,
+    padding: 18,
+    borderRadius: 7,
+    backgroundColor: "#F0F5FB",
+    color: "#4C4D56",
   },
 
   readonlyInput: {
-    backgroundColor: "#f3f4f6",
+    opacity: 0.6,
   },
 
-  settingsRow: {
+  button: {
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    padding: 18,
+    alignItems: "center",
+    marginTop: 40,
+    width: 200,
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontWeight: "500",
+  },
+
+  themeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: 20,
+    marginBottom: 10,
+    paddingRight: 10,
   },
 
-  settingLabel: {
+  sectionDivider: {
+    height: 1,
+    backgroundColor: "#E5E7EB",
+    marginVertical: 20,
+  },
+
+  passwordToggle: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10
+  },
+
+  passwordToggleText: {
+    fontSize: 18,
+    color: "#4C4D56",
+    fontWeight: "600",
+  },
+
+  passwordArrow: {
     fontSize: 16,
-    color: colors.text,
+    color: "#4C4D56",
+  },
+
+  passwordBox: {
+    backgroundColor: "#F9FAFB",
+    padding: 20,
+    borderRadius: 12,
+    marginTop: 10,
+  },
+
+  deleteButton: {
+    backgroundColor: "#FF3B30",
+    borderRadius: 10,
+    padding: 18,
+    alignItems: "center",
+    marginTop: 20,
+    width: 200,
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+
+  deleteText: {
+    fontSize: 16,
+    color: "white",
+    fontWeight: "600",
   },
 });

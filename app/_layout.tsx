@@ -26,7 +26,12 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="tabs" options={{ headerShown: false }} />
-          <Stack.Screen name="event/[id]" options={{ title: "Event Details" }} />
+          <Stack.Screen
+              name="event/[id]"
+              options={{
+                headerShown: false,
+              }}
+            />
           <Stack.Screen name="auth/login" options={{ headerShown: false }} />
           <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
           <Stack.Screen name="auth/forgot-password" options={{ headerShown: false }} />
