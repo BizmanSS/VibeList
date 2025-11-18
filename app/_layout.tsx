@@ -6,9 +6,12 @@ import { useEffect } from "react";
 import { bootstrapBookmarks, setEvents } from "../features/events/eventsSlice";
 import events from "../assets/data/events.json";
 import { AuthProvider } from "./context/AuthContext";
+import { registerForNotifications } from "../utils/NotificationsHandler";
+
 
 export default function RootLayout() {
   useEffect(() => {
+    void registerForNotifications();
     store.dispatch(setEvents(events as any));
     void bootstrapBookmarks(store.dispatch);
   }, []);

@@ -35,10 +35,19 @@ export default function EventCard({ event }: { event: EventItem }) {
           <Text style={styles.title}>{event.title}</Text>
 
           <Text
-            onPress={(e) => {
-              e.preventDefault();
-              dispatch(toggleBookmark(event.id));
-            }}
+            onPress={async (e) => {
+                  e.preventDefault();
+
+                  if (!saved) {
+                    // Fire notification BEFORE toggling (so title is correct)
+                    try {
+                      const { triggerBookmarkNotification } = await import("../utils/NotificationsHandler");
+                      await triggerBookmarkNotification(event.title);
+                    } catch {}
+                  }
+
+                  dispatch(toggleBookmark(event.id));
+                }}
             style={[
               styles.saveButton,
               saved ? styles.saveButtonActive : styles.saveButtonInactive,
