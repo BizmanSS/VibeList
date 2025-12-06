@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { View, Text, Modal, Pressable, StyleSheet, Image } from "react-native";
 import { colors } from "../constants/colors";
-import { useLocation } from "../hooks/useLocation";
 import LocationIcon from "../assets/icons/LocationIcon";
 
-export default function LocationSelector() {
-  const { city, updateCity } = useLocation();
+type Props = {
+  city: string;
+  onChange: (newCity: string) => void;
+};
+
+export default function LocationSelector({ city, onChange }: Props) {
   const [visible, setVisible] = useState(false);
 
-  const select = async (newCity: string) => {
-    await updateCity(newCity);
+  const select = (newCity: string) => {
+    onChange(newCity);
     setVisible(false);
   };
 
@@ -56,7 +59,10 @@ export default function LocationSelector() {
               <View style={styles.divider} />
 
               {/* VANCOUVER */}
-              <Pressable style={styles.option} onPress={() => select("Vancouver")}>
+              <Pressable
+                style={styles.option}
+                onPress={() => select("Vancouver")}
+              >
                 <Image
                   source={require("../assets/icons/Vancouver.png")}
                   style={[

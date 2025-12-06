@@ -32,7 +32,7 @@ export default function EventCard({ event }: { event: EventItem }) {
 
       <View style={styles.content}>
         <View style={styles.row}>
-          <Text style={styles.title}>{event.title}</Text>
+          <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
 
           <Text
             onPress={async (e) => {
@@ -57,7 +57,7 @@ export default function EventCard({ event }: { event: EventItem }) {
           </Text>
         </View>
 
-        <Text style={styles.subtext}>
+        <Text style={styles.subtext} numberOfLines={1}>
           {event.venue} • {date.toLocaleDateString()}
         </Text>
 
@@ -65,7 +65,7 @@ export default function EventCard({ event }: { event: EventItem }) {
           <View style={styles.iconItem}>
             <DollarIcon size={16} />
             <Text style={styles.iconText}>
-              {event.price ? event.price : "Free"}
+              {event.price ? event.price : "N/A"}
             </Text>
           </View>
 
@@ -103,11 +103,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: colors.textSecondary,
+    maxWidth: 280
   },
 
   subtext: {
     color: colors.subtext,
-    marginTop: -10
+    marginTop: -10,
+    maxWidth: 280
   },
 
   row: {

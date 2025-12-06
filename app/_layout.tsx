@@ -1,19 +1,48 @@
+// app/_layout.tsx
 import { Stack } from "expo-router";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
 import { colors } from "../constants/colors";
 import { useEffect } from "react";
 import { bootstrapBookmarks, setEvents } from "../features/events/eventsSlice";
-import events from "../assets/data/events.json";
 import { AuthProvider } from "./context/AuthContext";
-import { registerForNotifications } from "../utils/NotificationsHandler";
 
+import { db } from "../services/firebase";
+import { collection, onSnapshot } from "firebase/firestore";
+import type { EventItem } from "../types";
 
 export default function RootLayout() {
   useEffect(() => {
-    void registerForNotifications();
-    store.dispatch(setEvents(events as any));
+    const unsubscribe = onSnapshot(collection(db, "events"), (snapshot) => {
+      const eventList: EventItem[] = snapshot.docs.map((doc) => {
+        const data = doc.data() as any;
+        return {
+          id: doc.id,
+          title: data.title ?? "",
+          image:
+            data.image ??
+            "https://picsum.photos/seed/vibelist-event/600/400",
+          venue: data.venue ?? data.location ?? "",
+          city: data.city ?? data.location ?? "Toronto",
+          dateISO: data.date ?? data.dateISO ?? new Date().toISOString(),
+          price: data.price,
+          rating: data.rating,
+          description: data.description ,
+          externalLink: data.link ?? data.externalLink,
+        };
+      });
+
+      eventList.sort(
+        (a, b) =>
+          new Date(a.dateISO).getTime() - new Date(b.dateISO).getTime()
+      );
+
+      store.dispatch(setEvents(eventList));
+    });
+
     void bootstrapBookmarks(store.dispatch);
+
+    return unsubscribe;
   }, []);
 
   return (
@@ -29,9 +58,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="tabs" options={{ headerShown: false }} />
-          <Stack.Screen
-              name="event/[id]"
-              options={{
+          <Stack.Screen name="event/[id]" options={{
                 headerShown: false,
               }}
             />
