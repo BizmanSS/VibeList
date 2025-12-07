@@ -12,21 +12,17 @@ Notifications.setNotificationHandler({
 
 export async function registerForNotifications(): Promise<boolean> {
   if (Platform.OS === "web") return false;
-
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
-
   if (existingStatus !== "granted") {
     const { status } = await Notifications.requestPermissionsAsync();
     finalStatus = status;
   }
-
   return finalStatus === "granted";
 }
 
 export async function triggerBookmarkNotification(title: string) {
   if (Platform.OS === "web") return;
-
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "Event Saved!",
@@ -37,14 +33,14 @@ export async function triggerBookmarkNotification(title: string) {
   });
 }
 
-export async function scheduleEventReminders(title: string, eventDateISO: string) {
-  if (Platform.OS === "web") return;
-
+export async function scheduleEventReminders(title: string, eventDateISO: string): Promise<string[]> {
+  if (Platform.OS === "web") return [];
   const hasPermission = await registerForNotifications();
-  if (!hasPermission) return;
+  if (!hasPermission) return [];
 
   const eventDate = new Date(eventDateISO);
   const now = new Date();
+  const scheduledIds: string[] = [];
 
   const reminders = [
     { label: "in 3 days", ms: 3 * 24 * 60 * 60 * 1000 },
@@ -54,29 +50,25 @@ export async function scheduleEventReminders(title: string, eventDateISO: string
 
   for (const r of reminders) {
     const triggerTime = new Date(eventDate.getTime() - r.ms);
-
     if (triggerTime > now) {
-      await Notifications.scheduleNotificationAsync({
+      const id = await Notifications.scheduleNotificationAsync({
         content: {
           title: `🎉 Event Happening Soon!`,
-          body:
-            r.label === "1 hour before"
+          body: r.label === "1 hour before"
               ? `Your saved event "${title}" is happening in 1 hour! Get ready!`
               : `Your saved event "${title}" is happening ${r.label}!`,
           sound: true,
         },
-        trigger: {
-          type: 'date',
-          date: triggerTime,
-        } as Notifications.DateTriggerInput,
+        trigger: { type: 'date', date: triggerTime } as Notifications.DateTriggerInput,
       });
+      scheduledIds.push(id);
     }
   }
+  return scheduledIds;
 }
 
 export async function cancelEventReminders(notificationIds: string[]) {
-  if (Platform.OS === "web") return;
-
+  if (Platform.OS === "web" || !notificationIds) return;
   for (const id of notificationIds) {
     await Notifications.cancelScheduledNotificationAsync(id);
   }
