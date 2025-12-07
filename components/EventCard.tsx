@@ -14,6 +14,7 @@ import TimeIcon from "../assets/icons/TimeIcon";
 export default function EventCard({ event }: { event: EventItem }) {
   const router = useRouter();
   const dispatch = useDispatch();
+  
   const bm = useSelector(selectBookmarkedIds);
   const saved = !!bm[event.id];
 
@@ -22,6 +23,31 @@ export default function EventCard({ event }: { event: EventItem }) {
     hour: "numeric",
     minute: "2-digit",
   });
+
+  const handleToggleSave = async () => {
+    
+    const { 
+      scheduleEventReminders, 
+      cancelEventReminders, 
+      triggerBookmarkNotification 
+    } = await import("../utils/NotificationsHandler");
+
+    if (!saved) {
+      const notificationIds = await scheduleEventReminders(event.title, event.dateISO);
+      
+      dispatch(toggleBookmark({ id: event.id, notificationIds }));
+
+      await triggerBookmarkNotification(event.title);
+    } else {
+      const existingIds = bm[event.id];
+
+      if (existingIds && Array.isArray(existingIds)) {
+        await cancelEventReminders(existingIds);
+      }
+
+      dispatch(toggleBookmark({ id: event.id }));
+    }
+  };
 
   return (
     <Pressable
@@ -34,27 +60,21 @@ export default function EventCard({ event }: { event: EventItem }) {
         <View style={styles.row}>
           <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
 
-          <Text
-            onPress={async (e) => {
-                  e.preventDefault();
-
-                  if (!saved) {
-                    // Fire notification BEFORE toggling (so title is correct)
-                    try {
-                      const { triggerBookmarkNotification } = await import("../utils/NotificationsHandler");
-                      await triggerBookmarkNotification(event.title);
-                    } catch {}
-                  }
-
-                  dispatch(toggleBookmark(event.id));
-                }}
-            style={[
-              styles.saveButton,
-              saved ? styles.saveButtonActive : styles.saveButtonInactive,
-            ]}
+          <Pressable
+            onPress={(e) => {
+              e.stopPropagation(); 
+              handleToggleSave();
+            }}
           >
-            {saved ? "Saved" : "Save"}
-          </Text>
+            <Text
+              style={[
+                styles.saveButton,
+                saved ? styles.saveButtonActive : styles.saveButtonInactive,
+              ]}
+            >
+              {saved ? "Saved" : "Save"}
+            </Text>
+          </Pressable>
         </View>
 
         <Text style={styles.subtext} numberOfLines={1}>
@@ -86,55 +106,46 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 14,
   },
-
   image: {
     width: "100%",
     height: 140,
     borderRadius: 16
   },
-
   content: {
     padding: 12,
     paddingTop:0,
     gap: 0,
   },
-
   title: {
     fontSize: 16,
     fontWeight: "600",
     color: colors.textSecondary,
     maxWidth: 280
   },
-
   subtext: {
     color: colors.subtext,
     marginTop: -10,
     maxWidth: 280
   },
-
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems:"center"
   },
-
   iconRow: {
     flexDirection: "row",
     gap: 14,
     marginTop: 10,
   },
-
   iconItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4
   },
-
   iconText: {
     fontSize: 14,
     color: colors.textSecondary,
   },
-
   saveButton: {
     borderWidth: 1,
     borderColor: colors.primary,
@@ -144,18 +155,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop:10
   },
-
   saveButtonActive: {
     backgroundColor: colors.primary,
     color: colors.white,
   },
-
   saveButtonInactive: {
     backgroundColor: colors.white,
     color: colors.primary,
-  },
-
-  price: {
-    color: colors.text,
-  },
+  }
 });
