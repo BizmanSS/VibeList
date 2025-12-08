@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Modal, Pressable, StyleSheet, Image } from "react-native";
 import { colors } from "../constants/colors";
 import LocationIcon from "../assets/icons/LocationIcon";
+import { useThemeMode } from "../app/context/ThemeContext";
 
 type Props = {
   city: string;
@@ -10,6 +11,8 @@ type Props = {
 
 export default function LocationSelector({ city, onChange }: Props) {
   const [visible, setVisible] = useState(false);
+  const { theme, themeMode } = useThemeMode();
+  const darkMode = themeMode === "dark";
 
   const select = (newCity: string) => {
     onChange(newCity);
@@ -20,34 +23,35 @@ export default function LocationSelector({ city, onChange }: Props) {
     <View style={styles.container}>
       <Pressable onPress={() => setVisible(true)}>
         <View style={styles.locationBox}>
-          <View style={styles.locationIcon}>
-            <LocationIcon />
+          <View style={[styles.locationIcon, { backgroundColor: darkMode ? theme.card : colors.warmGrey}]}>
+            <LocationIcon color={theme.text}/>
           </View>
           <View>
-            <Text style={styles.subLabel}>LOCATION</Text>
-            <Text style={styles.label}>{city}</Text>
+            <Text style={[styles.subLabel, { color: colors.primary }]}>LOCATION</Text>
+            <Text style={[styles.label, { color: theme.text }]}>{city}</Text>
           </View>
         </View>
       </Pressable>
 
       <Modal visible={visible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Select Location</Text>
+          <View style={[styles.modalBox, { backgroundColor: theme.card }]}>
+            <Text style={[styles.modalTitle, { color: theme.text }]}>Select Location</Text>
 
             <View style={styles.optionRow}>
-              {/* TORONTO */}
               <Pressable style={styles.option} onPress={() => select("Toronto")}>
                 <Image
                   source={require("../assets/icons/Toronto.png")}
                   style={[
                     styles.cityImage,
                     city === "Toronto" && styles.selectedImage,
+                    { tintColor: darkMode ? "white" : undefined }
                   ]}
                 />
                 <Text
                   style={[
                     styles.cityLabel,
+                    { color: theme.text },
                     city === "Toronto" && styles.selectedLabel,
                   ]}
                 >
@@ -56,23 +60,21 @@ export default function LocationSelector({ city, onChange }: Props) {
                 {city === "Toronto" && <View style={styles.underline} />}
               </Pressable>
 
-              <View style={styles.divider} />
+              <View style={[styles.divider, { backgroundColor: theme.divider }]} />
 
-              {/* VANCOUVER */}
-              <Pressable
-                style={styles.option}
-                onPress={() => select("Vancouver")}
-              >
+              <Pressable style={styles.option} onPress={() => select("Vancouver")}>
                 <Image
                   source={require("../assets/icons/Vancouver.png")}
                   style={[
                     styles.cityImage,
                     city === "Vancouver" && styles.selectedImage,
+                    { tintColor: darkMode ? "white" : undefined }
                   ]}
                 />
                 <Text
                   style={[
                     styles.cityLabel,
+                    { color: theme.text },
                     city === "Vancouver" && styles.selectedLabel,
                   ]}
                 >
@@ -95,8 +97,8 @@ export default function LocationSelector({ city, onChange }: Props) {
 const styles = StyleSheet.create({
   container: { marginBottom: 10, marginTop: 10 },
 
-  label: { fontSize: 16, color: colors.text },
-  subLabel: { color: colors.primary, fontSize: 12, fontWeight: "700" },
+  label: { fontSize: 16 },
+  subLabel: { fontSize: 12, fontWeight: "700" },
 
   locationBox: {
     flexDirection: "row",
@@ -108,7 +110,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 200,
-    backgroundColor: colors.warmGrey,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
   },
 
   modalBox: {
-    backgroundColor: colors.white,
     padding: 25,
     borderRadius: 20,
     width: "100%",
@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 25,
-    color: colors.text,
   },
 
   optionRow: {
@@ -155,7 +154,6 @@ const styles = StyleSheet.create({
   divider: {
     width: 1,
     height: 80,
-    backgroundColor: "#E5E5E5",
     marginHorizontal: 10,
   },
 
@@ -174,7 +172,6 @@ const styles = StyleSheet.create({
   cityLabel: {
     fontSize: 16,
     fontWeight: "500",
-    color: colors.text,
     opacity: 0.65,
   },
 

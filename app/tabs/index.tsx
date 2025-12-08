@@ -5,17 +5,22 @@ import { selectAllEvents } from "../../features/events/eventsSlice";
 import EventCard from "../../components/EventCard";
 import LocationSelector from "../../components/LocationSelector";
 import { useLocation } from "../../hooks/useLocation";
+import { useThemeMode } from "../context/ThemeContext";
 
 export default function Home() {
   const events = useSelector(selectAllEvents);
   const { city, updateCity } = useLocation();
-
+  const { theme } = useThemeMode();
   const filteredEvents = events.filter((e) => !city || e.city === city);
 
   return (
-    <View style={global.screen}>
+    <View style={[global.screen, { backgroundColor: theme.background }]}>
       <LocationSelector city={city} onChange={updateCity} />
-      <Text style={global.h1}>Discover</Text>
+
+      <Text style={[global.h1, { color: theme.text }]}>
+        Discover
+      </Text>
+
       <FlatList
         data={filteredEvents}
         keyExtractor={(e) => e.id}

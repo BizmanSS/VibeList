@@ -1,4 +1,13 @@
-import { View, Text, Image, ScrollView, StyleSheet, Pressable, Linking, Share } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  Linking,
+  Share,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -10,19 +19,26 @@ import { colors } from "../../constants/colors";
 
 import DollarIcon from "../../assets/icons/DollarIcon";
 import TimeIcon from "../../assets/icons/TimeIcon";
+import { useThemeMode } from "../context/ThemeContext";
+import {
+  scheduleEventReminders,
+  cancelEventReminders,
+  triggerBookmarkNotification,
+} from "../../utils/NotificationsHandler";
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const dispatch = useDispatch();
   const router = useRouter();
+  const { theme } = useThemeMode();
 
   const event = useSelector((st: any) => selectEventById(st, id!));
   const bm = useSelector(selectBookmarkedIds);
 
   if (!event)
     return (
-      <View style={styles.screen}>
-        <Text>Not found.</Text>
+      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+        <Text style={{ color: theme.text }}>Not found.</Text>
       </View>
     );
 
@@ -50,11 +66,41 @@ export default function EventDetails() {
     minute: "2-digit",
   });
 
+  const handleToggleSave = async () => {
+    if (!isSaved) {
+      const notificationIds = await scheduleEventReminders(
+        event.title,
+        event.dateISO
+      );
+
+      dispatch(toggleBookmark({ id: event.id, notificationIds }));
+
+      await triggerBookmarkNotification(event.title);
+    } else {
+      const existingIds = bm[event.id];
+
+      if (existingIds && Array.isArray(existingIds)) {
+        await cancelEventReminders(existingIds);
+      }
+
+      dispatch(toggleBookmark({ id: event.id }));
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={styles.screen} contentContainerStyle={{ paddingBottom: 140 }}>
+      <ScrollView
+        style={[styles.screen, { backgroundColor: theme.background }]}
+        contentContainerStyle={{ paddingBottom: 140 }}
+      >
         <View style={styles.imageBackground}>
-          <Text style={styles.backButton} onPress={safeBack}>
+          <Text
+            style={[
+              styles.backButton,
+              { backgroundColor: theme.card, color: theme.text },
+            ]}
+            onPress={safeBack}
+          >
             &lt;
           </Text>
 
@@ -62,44 +108,58 @@ export default function EventDetails() {
         </View>
 
         <View style={styles.content}>
+          <Text style={[styles.title, { color: theme.text }]}>
+            {event.title}
+          </Text>
 
-        <Text style={styles.title}>{event.title}</Text>
+          <Text style={[styles.subtitle, { color: theme.subtext }]}>
+            {event.venue} • {date.toLocaleDateString()}
+          </Text>
 
-        <Text style={styles.subtitle}>
-          {event.venue} •{` `}
-          {date.toLocaleDateString()}
-        </Text>
+          <View style={styles.iconRow}>
+            <View style={styles.iconItem}>
+              <DollarIcon size={22} />
+              <Text style={[styles.iconText, { color: theme.text }]}>
+                {event.price ? event.price : "Free"}
+              </Text>
+            </View>
 
-        <View style={styles.iconRow}>
-          <View style={styles.iconItem}>
-            <DollarIcon size={22} />
-            <Text style={styles.iconText}>{event.price ? event.price : "Free"}</Text>
+            <View style={styles.iconItem}>
+              <TimeIcon size={22} />
+              <Text style={[styles.iconText, { color: theme.text }]}>
+                {timeString}
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.iconItem}>
-            <TimeIcon size={22} />
-            <Text style={styles.iconText}>{timeString}</Text>
+          <Text style={[styles.description, { color: theme.text }]}>
+            {event.description ?? ""}
+          </Text>
+
+          <View style={styles.buttonRow}>
+            <Pressable style={styles.checkoutButton} onPress={openLink}>
+              <Text style={styles.checkoutText}>Check Out Event</Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.shareButton,
+                { backgroundColor: theme.card, borderColor: colors.primary },
+              ]}
+              onPress={shareEvent}
+            >
+              <Text style={styles.shareIcon}>⤴︎</Text>
+            </Pressable>
           </View>
-        </View>
-
-        <Text style={styles.description}>{event.description ?? ""}</Text>
-
-
-        <View style={styles.buttonRow}>
-          <Pressable style={styles.checkoutButton} onPress={openLink}>
-            <Text style={styles.checkoutText}>Check Out Event</Text>
-          </Pressable>
-
-          <Pressable style={styles.shareButton} onPress={shareEvent}>
-            <Text style={styles.shareIcon}>⤴︎</Text>
-          </Pressable>
-        </View>
         </View>
       </ScrollView>
 
       <Pressable
-        style={styles.floatingSave}
-        onPress={() => dispatch(toggleBookmark(event.id))}
+        style={[
+          styles.floatingSave,
+          { backgroundColor: theme.card, borderColor: colors.primary },
+        ]}
+        onPress={handleToggleSave}
       >
         <Text style={styles.floatingSaveText}>
           {isSaved ? "Saved ✓" : "Save to Favorites"}

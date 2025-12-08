@@ -10,27 +10,28 @@ import EventCard from "../../components/EventCard";
 
 import EmptyBoxIcon from "../../assets/icons/EmptyBox";
 import { colors } from "../../constants/colors";
+import { useThemeMode } from "../context/ThemeContext";
 
 export default function Favourites() {
   const events = useSelector(selectAllEvents);
   const bm = useSelector(selectBookmarkedIds);
   const router = useRouter();
+  const { theme } = useThemeMode();
 
   const favs = events.filter((e) => bm[e.id]);
 
-
   if (favs.length === 0) {
     return (
-      <View style={[global.screen, styles.emptyContainer]}>
-        <Text style={global.h1}>Favourites</Text>
+      <View style={[global.screen, styles.emptyContainer, { backgroundColor: theme.background }]}>
+        <Text style={[global.h1, { color: theme.text }]}>Favourites</Text>
 
         <View style={styles.emptyContent}>
           <EmptyBoxIcon size={140} />
 
-          <Text style={styles.emptyText}>
+          <Text style={[styles.emptyText, { color: theme.text }]}>
             Looks like your VibeList is empty,
           </Text>
-          <Text style={styles.emptyText2}>
+          <Text style={[styles.emptyText2, { color: theme.subtext }]}>
             discover some events near you!
           </Text>
 
@@ -45,10 +46,9 @@ export default function Favourites() {
     );
   }
 
-
   return (
-    <View style={global.screen}>
-      <Text style={global.h1}>Favourites</Text>
+    <View style={[global.screen, { backgroundColor: theme.background }]}>
+      <Text style={[global.h1, { color: theme.text }]}>Favourites</Text>
 
       <FlatList
         data={favs}
@@ -76,14 +76,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#4C4D56",
     marginTop: 20,
     textAlign: "center",
   },
 
   emptyText2: {
     fontSize: 16,
-    color: "#4C4D56",
     opacity: 0.8,
     marginBottom: 30,
     textAlign: "center",

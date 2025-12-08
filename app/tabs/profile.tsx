@@ -30,6 +30,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { useRouter } from "expo-router";
+import { useThemeMode } from "../context/ThemeContext";
 
 type ProfileData = {
   firstName?: string;
@@ -40,6 +41,8 @@ type ProfileData = {
 
 export default function Profile() {
   const router = useRouter();
+  const { theme, themeMode, toggleTheme } = useThemeMode();
+  const darkMode = themeMode === "dark";
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,7 +62,6 @@ export default function Profile() {
   const [changingPassword, setChangingPassword] = useState(false);
 
   const [deleting, setDeleting] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -217,12 +219,20 @@ export default function Profile() {
   return (
     <ImageBackground
       source={require("../../assets/images/profileWallpaper.webp")}
-      style={styles.background}
+      style={[styles.background, { backgroundColor: theme.background }]}
       resizeMode="cover"
     >
       <View style={styles.titleContainer}>
-        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-        <Text style={styles.title}>{displayName}</Text>
+        <Image
+          source={{ uri: avatarUrl }}
+          style={[
+            styles.avatar,
+            { borderColor: theme.avatarBorder },
+          ]}
+        />
+        <Text style={[styles.title, { color: theme.titleText }]}>
+          {displayName}
+        </Text>
       </View>
 
       <KeyboardAvoidingView
@@ -230,47 +240,77 @@ export default function Profile() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
       >
-        <View style={styles.formWrapper}>
+        <View
+          style={[
+            styles.formWrapper,
+            { backgroundColor: theme.profileBackground },
+          ]}
+        >
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.label}>First Name</Text>
+            <Text style={[styles.label, { color: theme.text }]}>First Name</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputText,
+                },
+              ]}
               value={firstName}
               onChangeText={setFirstName}
               editable={isEditing}
               placeholder="First Name"
-              placeholderTextColor="#BEC3D2"
+              placeholderTextColor={theme.placeholder}
             />
 
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Last Name</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputText,
+                },
+              ]}
               value={lastName}
               onChangeText={setLastName}
               editable={isEditing}
               placeholder="Last Name"
-              placeholderTextColor="#BEC3D2"
+              placeholderTextColor={theme.placeholder}
             />
 
-            <Text style={styles.label}>Gender</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Gender</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputText,
+                },
+              ]}
               value={gender}
               onChangeText={setGender}
               editable={isEditing}
               placeholder="Gender"
-              placeholderTextColor="#BEC3D2"
+              placeholderTextColor={theme.placeholder}
             />
 
-            <Text style={styles.label}>Email</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Email</Text>
             <TextInput
-              style={[styles.input, styles.readonlyInput]}
+              style={[
+                styles.input,
+                styles.readonlyInput,
+                {
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputText,
+                },
+              ]}
               value={email}
               editable={false}
-              placeholderTextColor="#BEC3D2"
+              placeholderTextColor={theme.placeholder}
             />
 
             <TouchableOpacity
@@ -293,64 +333,110 @@ export default function Profile() {
               </TouchableOpacity>
             )}
 
-            <View style={styles.sectionDivider} />
+            <View
+              style={[
+                styles.sectionDivider,
+                { backgroundColor: theme.divider },
+              ]}
+            />
 
             <View style={styles.themeRow}>
-              <Text style={styles.label}>Dark Theme</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                Dark Theme
+              </Text>
               <Switch
                 value={darkMode}
-                onValueChange={setDarkMode}
-                trackColor={{ false: "#bbb", true: colors.primary }}
-                thumbColor={darkMode ? colors.white : "#f4f3f4"}
+                onValueChange={toggleTheme}
+                trackColor={{
+                  false: theme.switchTrackOff,
+                  true: colors.primary,
+                }}
+                thumbColor={darkMode ? colors.white : theme.switchThumbOff}
               />
             </View>
 
-            <View style={styles.sectionDivider} />
+            <View
+              style={[
+                styles.sectionDivider,
+                { backgroundColor: theme.divider },
+              ]}
+            />
 
             <TouchableOpacity
               onPress={() => setShowPasswordSection((prev) => !prev)}
               style={styles.passwordToggle}
             >
-              <Text style={styles.passwordToggleText}>Change Password</Text>
-              <Text style={styles.passwordArrow}>
+              <Text
+                style={[
+                  styles.passwordToggleText,
+                  { color: theme.text },
+                ]}
+              >
+                Change Password
+              </Text>
+              <Text style={[styles.passwordArrow, { color: theme.text }]}>
                 {showPasswordSection ? "▲" : "▼"}
               </Text>
             </TouchableOpacity>
 
             {showPasswordSection && (
-              <View style={styles.passwordBox}>
+              <View
+                style={[
+                  styles.passwordBox,
+                  { backgroundColor: theme.passwordBoxBackground },
+                ]}
+              >
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: theme.inputBackground,
+                      color: theme.inputText,
+                    },
+                  ]}
                   placeholder="Current Password"
                   secureTextEntry
                   value={currentPassword}
                   onChangeText={setCurrentPassword}
-                  placeholderTextColor="#BEC3D2"
+                  placeholderTextColor={theme.placeholder}
                 />
 
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: theme.inputBackground,
+                      color: theme.inputText,
+                    },
+                  ]}
                   placeholder="New Password"
                   secureTextEntry
                   value={newPassword}
                   onChangeText={setNewPassword}
-                  placeholderTextColor="#BEC3D2"
+                  placeholderTextColor={theme.placeholder}
                 />
 
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: theme.inputBackground,
+                      color: theme.inputText,
+                    },
+                  ]}
                   placeholder="Confirm New Password"
                   secureTextEntry
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
-                  placeholderTextColor="#BEC3D2"
+                  placeholderTextColor={theme.placeholder}
                 />
 
                 <TouchableOpacity
-                  style={[styles.button, changingPassword && styles.buttonDisabled]}
-                  onPress={
-                    changingPassword ? undefined : handleChangePassword
-                  }
+                  style={[
+                    styles.button,
+                    changingPassword && styles.buttonDisabled,
+                  ]}
+                  onPress={changingPassword ? undefined : handleChangePassword}
                 >
                   <Text style={styles.buttonText}>
                     {changingPassword ? "Updating..." : "Update Password"}
@@ -366,6 +452,7 @@ export default function Profile() {
             <TouchableOpacity
               style={[
                 styles.deleteButton,
+                { backgroundColor: theme.danger },
                 deleting && styles.buttonDisabled,
               ]}
               onPress={deleting ? undefined : handleDeleteAccount}
@@ -407,17 +494,16 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 55,
     borderWidth: 2,
-    borderColor: "white",
     marginBottom: 10,
   },
   title: {
     fontSize: 20,
-    color: "white",
     fontWeight: "600",
   },
+
+
   formWrapper: {
     flex: 1,
-    backgroundColor: "white",
     width: "100%",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -429,15 +515,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: "#4C4D56",
     marginBottom: 10,
   },
   input: {
     marginBottom: 20,
     padding: 18,
     borderRadius: 7,
-    backgroundColor: "#F0F5FB",
-    color: "#4C4D56",
   },
   readonlyInput: {
     opacity: 0.6,
@@ -470,7 +553,6 @@ const styles = StyleSheet.create({
   },
   sectionDivider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
     marginVertical: 20,
   },
   passwordToggle: {
@@ -481,21 +563,17 @@ const styles = StyleSheet.create({
   },
   passwordToggleText: {
     fontSize: 18,
-    color: "#4C4D56",
     fontWeight: "600",
   },
   passwordArrow: {
     fontSize: 16,
-    color: "#4C4D56",
   },
   passwordBox: {
-    backgroundColor: "#F9FAFB",
     padding: 20,
     borderRadius: 12,
     marginTop: 10,
   },
   deleteButton: {
-    backgroundColor: "#FF3B30",
     borderRadius: 10,
     padding: 18,
     alignItems: "center",

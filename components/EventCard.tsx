@@ -10,13 +10,15 @@ import {
 
 import DollarIcon from "../assets/icons/DollarIcon";
 import TimeIcon from "../assets/icons/TimeIcon";
+import { useThemeMode } from "../app/context/ThemeContext";
 
 export default function EventCard({ event }: { event: EventItem }) {
   const router = useRouter();
   const dispatch = useDispatch();
-  
+
   const bm = useSelector(selectBookmarkedIds);
   const saved = !!bm[event.id];
+  const { theme } = useThemeMode();
 
   const date = new Date(event.dateISO);
   const timeString = date.toLocaleTimeString([], {
@@ -25,19 +27,21 @@ export default function EventCard({ event }: { event: EventItem }) {
   });
 
   const handleToggleSave = async () => {
-    const { 
-      scheduleEventReminders, 
-      cancelEventReminders, 
-      triggerBookmarkNotification 
+    const {
+      scheduleEventReminders,
+      cancelEventReminders,
+      triggerBookmarkNotification,
     } = await import("../utils/NotificationsHandler");
 
     if (!saved) {
-      const notificationIds = await scheduleEventReminders(event.title, event.dateISO);
-      
+      const notificationIds = await scheduleEventReminders(
+        event.title,
+        event.dateISO
+      );
+
       dispatch(toggleBookmark({ id: event.id, notificationIds }));
 
       await triggerBookmarkNotification(event.title);
-      
     } else {
       const existingIds = bm[event.id];
 
@@ -52,13 +56,18 @@ export default function EventCard({ event }: { event: EventItem }) {
   return (
     <Pressable
       onPress={() => router.push(`/event/${event.id}`)}
-      style={styles.card}
+      style={[styles.card, { backgroundColor: theme.card }]}
     >
       <Image source={{ uri: event.image }} style={styles.image} />
 
       <View style={styles.content}>
         <View style={styles.row}>
-          <Text style={styles.title} numberOfLines={1}>{event.title}</Text>
+          <Text
+            style={[styles.title, { color: theme.text }]}
+            numberOfLines={1}
+          >
+            {event.title}
+          </Text>
 
           <Pressable
             onPress={(e) => {
@@ -69,7 +78,9 @@ export default function EventCard({ event }: { event: EventItem }) {
             <Text
               style={[
                 styles.saveButton,
-                saved ? styles.saveButtonActive : styles.saveButtonInactive,
+                saved
+                  ? styles.saveButtonActive
+                  : [styles.saveButtonInactive, { backgroundColor: theme.card }],
               ]}
             >
               {saved ? "Saved" : "Save"}
@@ -77,21 +88,26 @@ export default function EventCard({ event }: { event: EventItem }) {
           </Pressable>
         </View>
 
-        <Text style={styles.subtext} numberOfLines={1}>
+        <Text
+          style={[styles.subtext, { color: theme.subtext }]}
+          numberOfLines={1}
+        >
           {event.venue} • {date.toLocaleDateString()}
         </Text>
 
         <View style={styles.iconRow}>
-          <View style={styles.iconItem}>
+          <View className="" style={styles.iconItem}>
             <DollarIcon size={16} />
-            <Text style={styles.iconText}>
+            <Text style={[styles.iconText, { color: theme.text }]}>
               {event.price ? event.price : "N/A"}
             </Text>
           </View>
 
           <View style={styles.iconItem}>
             <TimeIcon size={16} />
-            <Text style={styles.iconText}>{timeString}</Text>
+            <Text style={[styles.iconText, { color: theme.text }]}>
+              {timeString}
+            </Text>
           </View>
         </View>
       </View>
@@ -101,7 +117,6 @@ export default function EventCard({ event }: { event: EventItem }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.card,
     borderRadius: 16,
     overflow: "hidden",
     marginBottom: 14,
@@ -123,7 +138,6 @@ const styles = StyleSheet.create({
     maxWidth: 280
   },
   subtext: {
-    color: colors.subtext,
     marginTop: -10,
     maxWidth: 280
   },
@@ -144,7 +158,6 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 14,
-    color: colors.textSecondary,
   },
   saveButton: {
     borderWidth: 1,

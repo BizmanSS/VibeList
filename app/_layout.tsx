@@ -10,6 +10,8 @@ import { AuthProvider } from "./context/AuthContext";
 import { db } from "../services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import type { EventItem } from "../types";
+import { ThemeProvider } from "./context/ThemeContext";
+
 
 export default function RootLayout() {
   useEffect(() => {
@@ -47,6 +49,7 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
+      <ThemeProvider>
       <AuthProvider>
         <Stack
           screenOptions={{
@@ -67,6 +70,7 @@ export default function RootLayout() {
           <Stack.Screen name="auth/forgot-password" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>
+      </ThemeProvider>
     </Provider>
   );
 }
