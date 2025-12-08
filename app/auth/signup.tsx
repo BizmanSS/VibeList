@@ -1,22 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ImageBackground, KeyboardAvoidingView, Platform, ScrollView, } from "react-native";
 import { auth, db } from "../../services/firebase";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signOut,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut, } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "expo-router";
 import { colors } from "../../constants/colors";

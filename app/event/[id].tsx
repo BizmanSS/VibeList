@@ -1,30 +1,12 @@
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Linking,
-  Share,
-} from "react-native";
+import { View, Text, Image, ScrollView, StyleSheet, Pressable, Linking, Share,} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectEventById,
-  toggleBookmark,
-  selectBookmarkedIds,
-} from "../../features/events/eventsSlice";
+import { selectEventById, toggleBookmark, selectBookmarkedIds,} from "../../features/events/eventsSlice";
 import { colors } from "../../constants/colors";
-
 import DollarIcon from "../../assets/icons/DollarIcon";
 import TimeIcon from "../../assets/icons/TimeIcon";
 import { useThemeMode } from "../context/ThemeContext";
-import {
-  scheduleEventReminders,
-  cancelEventReminders,
-  triggerBookmarkNotification,
-} from "../../utils/NotificationsHandler";
+import { scheduleEventReminders, cancelEventReminders, triggerBookmarkNotification, } from "../../utils/NotificationsHandler";
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();

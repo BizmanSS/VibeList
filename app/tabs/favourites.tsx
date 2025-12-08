@@ -2,10 +2,7 @@ import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import { useSelector } from "react-redux";
 import { global } from "../../styles/global";
 import { useRouter } from "expo-router";
-import {
-  selectAllEvents,
-  selectBookmarkedIds,
-} from "../../features/events/eventsSlice";
+import { selectAllEvents, selectBookmarkedIds, } from "../../features/events/eventsSlice";
 import EventCard from "../../components/EventCard";
 
 import EmptyBoxIcon from "../../assets/icons/EmptyBox";

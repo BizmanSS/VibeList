@@ -11,7 +11,7 @@ export async function saveLocation(city: string) {
 export async function loadLocation(): Promise<string> {
   try {
     const city = await AsyncStorage.getItem(KEY);
-    return city || "Toronto"; // default city for now
+    return city || "Toronto";
   } catch {
     return "Toronto";
   }
