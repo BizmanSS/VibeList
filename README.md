@@ -9,7 +9,7 @@
   - Email: dhruviii.patel@mail.utoronto.ca
 
 ## Demo Video
-Google Drive Link: [https://drive.google.com/drive/home?dmr=1&ec=wgc-drive-globalnav-goto](https://drive.google.com/drive/home?dmr=1&ec=wgc-drive-globalnav-goto)
+Google Drive Link: https://drive.google.com/file/d/1EoYJAfA18894NgFDslMgdUwbJbcpLMkm/view?usp=sharing
 
 ## Motivation
 Everyone has had that moment: finding out about an amazing concert, festival, pop-up market, or workshop only after it's already over and wishing they had known sooner. In cities like Toronto and Vancouver, incredible events take place every single day, yet most people discover them completely by chance, whether through a friend's Instagram story, a random poster on the street, or endless scrolling across scattered websites and apps. Too many listings are outdated, incomplete, or buried.
