@@ -1,16 +1,6 @@
 // app/auth/forgot-password.tsx
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ImageBackground, KeyboardAvoidingView, Platform, } from "react-native";
 import { auth } from "../../services/firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "expo-router";

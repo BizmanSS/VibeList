@@ -1,34 +1,9 @@
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-  Alert,
-  Switch,
-  TouchableOpacity,
-  ImageBackground,
-} from "react-native";
+import { View, Text, Image, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, Alert, Switch, TouchableOpacity, ImageBackground,} from "react-native";
 import { useEffect, useState } from "react";
 import { colors } from "../../constants/colors";
 import { auth, db } from "../../services/firebase";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import {
-  updatePassword,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  deleteUser,
-  signOut,
-} from "firebase/auth";
+import { doc, getDoc, updateDoc, deleteDoc, } from "firebase/firestore";
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser, signOut, } from "firebase/auth";
 import { useRouter } from "expo-router";
 import { useThemeMode } from "../context/ThemeContext";
 

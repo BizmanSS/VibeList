@@ -3,10 +3,7 @@ import { EventItem } from "../types";
 import { colors } from "../constants/colors";
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  toggleBookmark,
-  selectBookmarkedIds,
-} from "../features/events/eventsSlice";
+import { toggleBookmark, selectBookmarkedIds,} from "../features/events/eventsSlice";
 
 import DollarIcon from "../assets/icons/DollarIcon";
 import TimeIcon from "../assets/icons/TimeIcon";

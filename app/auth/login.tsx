@@ -1,15 +1,5 @@
-// app/auth/login.tsx
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  ImageBackground
-} from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, ImageBackground } from "react-native";
 import { auth } from "../../services/firebase";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { useRouter } from "expo-router";
@@ -38,7 +28,6 @@ const LoginScreen: React.FC = () => {
         return;
       }
 
-      // This is the only "new" bit: go to main app after successful login
       router.replace("/");
     } catch (error: any) {
       Alert.alert("Login Error", error.message);

@@ -278,7 +278,7 @@ cd vibelist
 ```
 npm install
 ```
-→ You may encounter some dependencies not working, in which case you should use: ```npm install --legacy-peer-deps```.
+You may encounter some dependencies not working, in which case you should use: ```npm install --legacy-peer-deps```.
 
 **NOTE:** Ensure that the version of this dependency remains as this version exactly:
 ```json
