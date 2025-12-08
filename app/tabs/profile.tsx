@@ -20,10 +20,6 @@ import {
   doc,
   getDoc,
   updateDoc,
-  getDocs,
-  collection,
-  query,
-  where,
   deleteDoc,
 } from "firebase/firestore";
 import {
@@ -38,7 +34,6 @@ import { useRouter } from "expo-router";
 type ProfileData = {
   firstName?: string;
   lastName?: string;
-  username?: string;
   gender?: string;
   email?: string;
 };
@@ -51,7 +46,6 @@ export default function Profile() {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
 
@@ -85,7 +79,6 @@ export default function Profile() {
 
           setFirstName(data.firstName ?? "");
           setLastName(data.lastName ?? "");
-          setUsername(data.username ?? "");
           setGender(data.gender ?? "");
           setEmail(data.email ?? user.email ?? "");
         } else {
@@ -102,7 +95,7 @@ export default function Profile() {
   }, []);
 
   const handleSaveProfile = async () => {
-    if (!firstName || !lastName || !username || !gender) {
+    if (!firstName || !lastName || !gender) {
       Alert.alert("Error", "Please fill all fields.");
       return;
     }
@@ -112,30 +105,15 @@ export default function Profile() {
       const user = auth.currentUser;
       if (!user) throw new Error("No authenticated user");
 
-      if (profile && username !== profile.username) {
-        const q = query(
-          collection(db, "users"),
-          where("username", "==", username)
-        );
-        const snap = await getDocs(q);
-        if (!snap.isEmpty) {
-          Alert.alert("Error", "Username already taken");
-          setSaving(false);
-          return;
-        }
-      }
-
       await updateDoc(doc(db, "users", user.uid), {
         firstName,
         lastName,
-        username,
         gender,
       });
 
       setProfile({
         firstName,
         lastName,
-        username,
         gender,
         email,
       });
@@ -234,7 +212,6 @@ export default function Profile() {
   const displayName =
     firstName || lastName ? `${firstName} ${lastName}`.trim() : "Guest User";
 
-  const usernameTag = username ? `@${username}` : "";
   const avatarUrl = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
   return (
@@ -246,7 +223,6 @@ export default function Profile() {
       <View style={styles.titleContainer}>
         <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         <Text style={styles.title}>{displayName}</Text>
-        {!!usernameTag && <Text style={styles.usernameTag}>{usernameTag}</Text>}
       </View>
 
       <KeyboardAvoidingView
@@ -276,16 +252,6 @@ export default function Profile() {
               onChangeText={setLastName}
               editable={isEditing}
               placeholder="Last Name"
-              placeholderTextColor="#BEC3D2"
-            />
-
-            <Text style={styles.label}>Username</Text>
-            <TextInput
-              style={styles.input}
-              value={username}
-              onChangeText={setUsername}
-              editable={isEditing}
-              placeholder="Username"
               placeholderTextColor="#BEC3D2"
             />
 
@@ -422,24 +388,20 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
   },
-
   keyboardWrapper: {
     flex: 1,
     width: "100%",
   },
-
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-
   titleContainer: {
     height: "28%",
     justifyContent: "center",
     alignItems: "center",
   },
-
   avatar: {
     width: 100,
     height: 100,
@@ -448,20 +410,11 @@ const styles = StyleSheet.create({
     borderColor: "white",
     marginBottom: 10,
   },
-
   title: {
     fontSize: 20,
     color: "white",
     fontWeight: "600",
   },
-
-  usernameTag: {
-    fontSize: 15,
-    color: "white",
-    marginTop: 4,
-    opacity: 0.9,
-  },
-
   formWrapper: {
     flex: 1,
     backgroundColor: "white",
@@ -471,17 +424,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingTop: 30,
   },
-
   scrollContent: {
     paddingBottom: 40,
   },
-
   label: {
     fontSize: 16,
     color: "#4C4D56",
     marginBottom: 10,
   },
-
   input: {
     marginBottom: 20,
     padding: 18,
@@ -489,11 +439,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F5FB",
     color: "#4C4D56",
   },
-
   readonlyInput: {
     opacity: 0.6,
   },
-
   button: {
     backgroundColor: colors.primary,
     borderRadius: 10,
@@ -504,17 +452,14 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto"
   },
-
   buttonDisabled: {
     opacity: 0.7,
   },
-
   buttonText: {
     fontSize: 16,
     color: "white",
     fontWeight: "500",
   },
-
   themeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -523,38 +468,32 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingRight: 10,
   },
-
   sectionDivider: {
     height: 1,
     backgroundColor: "#E5E7EB",
     marginVertical: 20,
   },
-
   passwordToggle: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10
   },
-
   passwordToggleText: {
     fontSize: 18,
     color: "#4C4D56",
     fontWeight: "600",
   },
-
   passwordArrow: {
     fontSize: 16,
     color: "#4C4D56",
   },
-
   passwordBox: {
     backgroundColor: "#F9FAFB",
     padding: 20,
     borderRadius: 12,
     marginTop: 10,
   },
-
   deleteButton: {
     backgroundColor: "#FF3B30",
     borderRadius: 10,
@@ -565,7 +504,6 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto"
   },
-
   deleteText: {
     fontSize: 16,
     color: "white",
